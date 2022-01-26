@@ -56,7 +56,7 @@ jointDiameter = [0 6 0]; %cm
 Wab = (linkDensity .* linkWidth .* linkThickness .* AB .* 9.8) ./ 1000 ; 
 Wbc = (linkDensity .* linkWidth .* linkThickness .* BC .* 9.8) ./ 1000 ; 
 Wcd = (linkDensity .* linkWidth .* linkThickness .* CD .* 9.8) ./ 1000 ; 
-Wde = (linkDensity .* linkWidth .* linkThickness .* DE .* 9.8) ./ 1000 ; 
+Wde = (linkDensity .* linkWidth .* linkThickness .* DE .* 9.8) ./ 1000 ; %error here
 Wef = (linkDensity .* linkWidth .* linkThickness .* EF .* 9.8) ./ 1000 ; 
 Wfg = (linkDensity .* linkWidth .* linkThickness .* FG .* 9.8) ./ 1000 ; 
 
