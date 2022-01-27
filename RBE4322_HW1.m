@@ -42,6 +42,7 @@ LG=norm(G-L); % distance between load and grounded joint G
 pvAB=B-A;
 pvBC=C-B;
 pvCD=D-C;
+pvDA=A-D;
 pvDE=E-D;
 pvEF=F-E;
 pvFG=G-F;
@@ -89,20 +90,68 @@ eqn8=cross(pvEF,fF)+cross(pvHef,Wef)==0;
 eqn9=fF+fG+Wfg+Wl==0;
 eqn10=cross(pvFG,fF)+cross(pvLG,Wl)+cross(pvHlg,Wfg)==0;
 
-solution = (solve([eqn1,eqn2,eqn3,eqn4,eqn5,eqn6,eqn7,eqn8,eqn9, eqn10],[Ax,Ay,Bx,By,Cx,Cy,Dx,Dy,Ex,Ey,Fx,Fy,Gx,Gy,inTorque]));
+staticsolution = (solve([eqn1,eqn2,eqn3,eqn4,eqn5,eqn6,eqn7,eqn8,eqn9, eqn10],[Ax,Ay,Bx,By,Cx,Cy,Dx,Dy,Ex,Ey,Fx,Fy,Gx,Gy,inTorque]));
 
-noWeightforce_Ax=double(solution.Ax)
-noWeightforce_Ay=double(solution.Ay)
-noWeightforce_Bx=double(solution.Bx)
-noWeightforce_By=double(solution.By)
-noWeightforce_Cx=double(solution.Cx)
-noWeightforce_Cy=double(solution.Cy)
-noWeightforce_Dx=double(solution.Dx)
-noWeightforce_Dy=double(solution.Dy)
-noWeightforce_Ex=double(solution.Ex)
-noWeightforce_Ey=double(solution.Ey)
-noWeightforce_Fx=double(solution.Fx)
-noWeightforce_Fy=double(solution.Fy)
-noWeightforce_Gx=double(solution.Gx)
-noWeightforce_Gy=double(solution.Gy)
-noWeighttorque_T=double(solution.inTorque)
+noWeightforce_Ax=double(staticsolution.Ax)
+noWeightforce_Ay=double(staticsolution.Ay)
+noWeightforce_Bx=double(staticsolution.Bx)
+noWeightforce_By=double(staticsolution.By)
+noWeightforce_Cx=double(staticsolution.Cx)
+noWeightforce_Cy=double(staticsolution.Cy)
+noWeightforce_Dx=double(staticsolution.Dx)
+noWeightforce_Dy=double(staticsolution.Dy)
+noWeightforce_Ex=double(staticsolution.Ex)
+noWeightforce_Ey=double(staticsolution.Ey)
+noWeightforce_Fx=double(staticsolution.Fx)
+noWeightforce_Fy=double(staticsolution.Fy)
+noWeightforce_Gx=double(staticsolution.Gx)
+noWeightforce_Gy=double(staticsolution.Gy)
+noWeighttorque_T=double(staticsolution.inTorque)
+
+%% position analysis
+
+omegaAB=[0 0 (7450/7)/3600*2*pi]; % 7450 parts per 7 hours assuming 1 revolution is 1 part
+alphaAB=[0 0 0]; % input link rotating at a constant velocity
+
+syms omegaBCz omegaDEz omegaEFz omegaFGz alphaBCz alphaDEz alphaEFz alphaFGz
+omegaBC=[0 0 omegaBCz];
+omegaDE=[0 0 omegaDEz];
+omegaEF=[0 0 omegaEFz];
+omegaFG=[0 0 omegaFGz];
+alphaBC=[0 0 alphaBCz];
+alphaDE=[0 0 alphaDEz];
+alphaEF=[0 0 alphaEFz];
+alphaFG=[0 0 alphaFGz];
+
+eqn11=cross(omegaAB,pvAB)+cross(omegaBC,pvBC)+cross(omegaDE,pvCD)==0;
+eqn12=cross(alphaAB,pvAB)+cross(omegaAB,cross(omegaAB,pvAB))+cross(alphaBC,pvBC)+cross(omegaBC,cross(omegaBC,pvBC))+cross(alphaDE,pvCD)+cross(omegaDE,cross(omegaDE,pvCD))==0;
+eqn13=cross(omegaDE,pvDE)+cross(omegaEF,pvEF)+cross(omegaFG,pvFG)==0;
+eqn14=cross(alphaDE,pvDE)+cross(omegaDE,cross(omegaDE,pvDE))+cross(alphaEF,pvEF)+cross(omegaEF,cross(omegaEF,pvEF))+cross(alphaFG,pvFG)+cross(omegaFG,cross(omegaFG,pvFG))==0;
+
+positionsolution= (solve([eqn11,eqn12,eqn13,eqn14],[omegaBCz,omegaDEz,omegaEFz,omegaFGz,alphaBCz,alphaDEz,alphaEFz,alphaFGz]));
+
+angvel_BC=double(positionsolution.omegaBCz)
+angvel_DE=double(positionsolution.omegaDEz)
+angvel_EF=double(positionsolution.omegaEFz)
+angvel_FG=double(positionsolution.omegaFGz)
+angacc_BC=double(positionsolution.alphaBCz)
+angacc_DE=double(positionsolution.alphaDEz)
+angacc_EF=double(positionsolution.alphaEFz)
+angacc_FG=double(positionsolution.alphaFGz)
+
+%% dynamic analysis
+eqn1=fA+fB+Wab==0;
+eqn2=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==0; %DOUBLE CHECK ORDER OF CROSS
+%Link BC
+eqn3=fB+fC+Wbc==0;
+eqn4=cross(pvBC,fC)+cross(pvHbc,Wbc)==0;
+%Link DEC
+eqn5=-fC+fD+fE+Wde==0;
+eqn6=cross(pvDE,fE)+cross(pvHde,Wde)+cross(pvCD,fC)==0;
+%Link EF
+eqn7=-fE+fF+Wef==0;
+eqn8=cross(pvEF,fF)+cross(pvHef,Wef)==0;
+%Link FG with load L
+eqn9=fF+fG+Wfg+Wl==0;
+eqn10=cross(pvFG,fF)+cross(pvLG,Wl)+cross(pvHlg,Wfg)==0;
+
