@@ -290,33 +290,46 @@ title(ax1,'Torque on Joint A')
 legend('Torque','Location','southeast');
 
 %Angular Accel/Velocity Graphs
-figure('name','Angular Accelerations and Velocities');
+[angvel_BCz;angvel_DEz;angvel_EFz;angvel_FGz;
+                    angacc_BCz;angacc_DEz;angacc_EFz;angacc_FGz];
+Figure('name','Angular Accelerations and Velocities');
 ax1= subplot(2,4,1);
 plot(theta,positions(1,:));
 title(ax1,'Angular Vel of link BC')
+legend('X Force','Y Force','Location','southeast');
 ax1= subplot(2,4,2);
 plot(theta,positions(1,:));
 title(ax1,'Angular Vel of link DE')
+legend('X Force','Y Force','Location','southeast');
 ax1= subplot(2,4,3);
 plot(theta,positions(3,:));
 title(ax1,'Angular Vel of link EF')
+legend('X Force','Y Force','Location','southeast');
 ax1= subplot(2,4,4);
 plot(theta,positions(4,:));
 title(ax1,'Angular Vel of link FG')
+legend('X Force','Y Force','Location','southeast');
 
 ax1= subplot(2,4,5);
 plot(theta,positions(5,:));
 title(ax1,'Angular Accel of link BC')
+legend('X Force','Y Force','Location','southeast');
 ax1= subplot(2,4,6);
 plot(theta,positions(6,:));
 title(ax1,'Angular Accel of link DE')
+legend('X Force','Y Force','Location','southeast');
 ax1= subplot(2,4,7);
 plot(theta,positions(7,:));
 title(ax1,'Angular Accel of link EF')
+legend('X Force','Y Force','Location','southeast');
 ax1= subplot(2,4,8);
-plot(theta,positions(8,:));
+plot(theta,positions(4,:));
 title(ax1,'Angular Accel of link FG')
+legend('X Force','Y Force','Location','southeast');
 
+
+    
+ %Plot Static Joint Forces
 %% 
 function values = linkageAnalysis(JB,JC,JE,JF)
 %% Static Analysis
