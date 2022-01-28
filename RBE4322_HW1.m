@@ -14,21 +14,18 @@ E=[.195 2.54 0];
 F=[-.98 2.57 0];
 G=[.05 .2 0];
 
-L=[-1.715 4.260 0]; %location of load
 
 %coordinates of link's COM
 Hab = [((A(1,1) + B(1,1)) / 2) ((A(1,2) + B(1,2)) / 2) 0];
 Hbc = [((B(1,1) + C(1,1)) / 2) ((B(1,2) + C(1,2)) / 2) 0];
 Hde = [((D(1,1) + E(1,1)) / 2) ((D(1,2) + E(1,2)) / 2) 0];
 Hef = [((E(1,1) + F(1,1)) / 2) ((E(1,2) + F(1,2)) / 2) 0];
-Hlg = [((L(1,1) + G(1,1)) / 2) ((L(1,2) + G(1,2)) / 2) 0];
 
 %position vectors of COM & relative points
 pvHab = Hab-A;
 pvHbc = Hbc-B;
 pvHde = Hde-D;
 pvHef = Hef-E;
-pvHlg = Hlg-G;
 
 %length of each link/ distance between joints
 AB=norm(B-A);
@@ -38,7 +35,7 @@ DE=norm(E-D);
 BE=norm(E-B);
 EF=norm(F-E);
 FG=norm(G-F);
-LG=norm(G-L); % distance between load and grounded joint G
+LF=1.843; % distance between load and joint F
 
 %position vectors 
 pvAB=B-A;
@@ -48,7 +45,13 @@ pvDA=A-D;
 pvDE=E-D;
 pvEF=F-E;
 pvFG=G-F;
+
+unit_GF= pvFG/FG;
+L=unit_GF*LF; %location of load
+Hlg = [((L(1,1) + G(1,1)) / 2) ((L(1,2) + G(1,2)) / 2) 0];
+pvHlg = G-Hlg;
 pvLG=G-L; %load
+
 
 %without weight of each link considered
 syms Ax Ay Bx By Cx Cy Dx Dy Ex Ey Fx Fy Gx Gy inTorque
@@ -71,7 +74,7 @@ Wbc = (linkDensity .* linkWidth .* linkThickness .* BC .* -9.8); % N
 Wcd = (linkDensity .* linkWidth .* linkThickness .* CD .* -9.8); % N
 Wde = (linkDensity .* linkWidth .* linkThickness .* DE .* -9.8); % N
 Wef = (linkDensity .* linkWidth .* linkThickness .* EF .* -9.8); % N
-Wfg = (linkDensity .* linkWidth .* linkThickness .* LG .* -9.8); % N
+Wfg = (linkDensity .* linkWidth .* linkThickness .* (LF + FG) .* -9.8); % N
 Wl = [0 -200 0] ; %given weight of load in NEWTONS
 
 %Link AB/1
@@ -164,7 +167,7 @@ JAB_A=1/12*(Wab(2)/-9.8)*(linkWidth(2)^2+AB^2)+(Wab(2)/-9.8)*norm(pvHab)^2;
 JBC_B=1/12*(Wbc(2)/-9.8)*(linkWidth(2)^2+BC^2)+(Wbc(2)/-9.8)*norm(pvHbc)^2;
 JDE_D=1/12*(Wde(2)/-9.8)*(linkWidth(2)^2+DE^2)+(Wde(2)/-9.8)*norm(pvHde)^2;
 JEF_E=1/12*(Wef(2)/-9.8)*(linkWidth(2)^2+EF^2)+(Wef(2)/-9.8)*norm(pvHef)^2;
-JLG_G=1/12*(Wfg(2)/-9.8)*(linkWidth(2)^2+LG^2)+(Wfg(2)/-9.8)*norm(pvHlg)^2;
+JLG_G=1/12*(Wfg(2)/-9.8)*(linkWidth(2)^2+(LF+FG)^2)+(Wfg(2)/-9.8)*norm(pvHlg)^2;
 
 eqn15=fA+fB+Wab==(Wab(2)/-9.8)*accH_AB;
 eqn16=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==JAB_A*alphaAB;

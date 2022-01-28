@@ -2,13 +2,13 @@ clc
 clear
 
 %coordinates of joints
-A=[7 4 0];
-B=[5 16 0];
-E=[18 35 0];
-C=[25 25 0];
-D=[23 10 0];
-F=[43 32 0];
-G=[45 17 0];
+A=[1.4 .485 0];
+B=[1.67 0.99 0];
+C=[.255  1.035 0];
+D=[.285 .055 0];
+E=[.195 2.54 0];
+F=[-.98 2.57 0];
+G=[.05 .2 0];
 
 %length of each link/ distance between joints
 AB=norm(B-A);
@@ -35,6 +35,8 @@ end
 
     
 for theta=0:1:360
+theta
+
     
 %position analysis
 
@@ -122,6 +124,7 @@ if circIntersect_x==0 && circIntersect_y==0 % if the circles are not intersectin
               newF_y(theta+1)=F_new(2);
               
                   %saving this into an Excel spreadsheet
+           
                 
             positionsMatrix = [B_new C_new E_new F_new];
  
@@ -168,6 +171,8 @@ else
     return 
 end 
 
+
+
 %end of position analysis
 
 %Next Force analysis using Static Equilibrium
@@ -184,6 +189,24 @@ end
 
 %Force Analysis using Newton's law
 
+B=B_new;
+C=C_new;
+E=E_new;
+F=F_new;
 
 end
+ figure
+             
+              ax1= subplot(2,2,1);
+              plot(newB_x,newB_y);
+              title(ax1,'Joint B')
+              ax2=  subplot(2,2,2);
+               plot(newC_x,newC_y);
+                title(ax2,'Joint C')
+               ax3=  subplot(2,2,3);
+              plot(newE_x,newE_y);
+                title(ax3,'Joint E')
+             ax4=  subplot(2,2,4);
+              plot(newF_x,newF_y);
+                title(ax4,'Joint F')
 
