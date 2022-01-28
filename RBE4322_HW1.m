@@ -3,7 +3,7 @@ clc;
 pi = 3.14;
 
 %% Static Analysis
-
+%Make this pretty
 % Assume assembly is made out of aluminium ​
 %coordinates of joints
 A=[1.4 .485 0];

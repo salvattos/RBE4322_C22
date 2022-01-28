@@ -1,6 +1,6 @@
 clc 
 clear
-
+%Make this pretty
 %coordinates of joints
 A=[1.4 .485 0];
 B=[1.67 0.99 0];
