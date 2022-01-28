@@ -1,7 +1,9 @@
 clear;
 clc;
 pi = 3.14;
+
 %% Static Analysis
+
 % Assume assembly is made out of aluminium ​
 %coordinates of joints
 A=[1.4 .485 0];
@@ -60,23 +62,23 @@ fG=[Gx Gy 0];
 Ta=[0 0 inTorque];
 
 %weight of links in Newtons (assuming the link material is Al 6061 T6)
-linkDensity = [0 2.70 0]; %g/cm^3
-linkWidth = [0 10 0]; % cm
-linkThickness = [0 5 0]; %cm
-jointDiameter = [0 6 0]; %cm
-Wab = (linkDensity .* linkWidth .* linkThickness .* AB .* -9.8) ./ 1000 ; 
-Wbc = (linkDensity .* linkWidth .* linkThickness .* BC .* -9.8) ./ 1000 ; 
-Wcd = (linkDensity .* linkWidth .* linkThickness .* CD .* -9.8) ./ 1000 ; 
-Wde = (linkDensity .* linkWidth .* linkThickness .* DE .* -9.8) ./ 1000 ; 
-Wef = (linkDensity .* linkWidth .* linkThickness .* EF .* -9.8) ./ 1000 ; 
-Wfg = (linkDensity .* linkWidth .* linkThickness .* FG .* -9.8) ./ 1000 ; 
+linkDensity = [0 2710 0]; % kg/m^3
+linkWidth = [0 0.10 0]; % m
+linkThickness = [0 0.05 0]; % m
+jointDiameter = [0 0.06 0]; % m
+Wab = (linkDensity .* linkWidth .* linkThickness .* AB .* -9.8); % N
+Wbc = (linkDensity .* linkWidth .* linkThickness .* BC .* -9.8); % N
+Wcd = (linkDensity .* linkWidth .* linkThickness .* CD .* -9.8); % N
+Wde = (linkDensity .* linkWidth .* linkThickness .* DE .* -9.8); % N
+Wef = (linkDensity .* linkWidth .* linkThickness .* EF .* -9.8); % N
+Wfg = (linkDensity .* linkWidth .* linkThickness .* LG .* -9.8); % N
 Wl = [0 -200 0] ; %given weight of load in NEWTONS
 
 %Link AB/1
 %First equation represents sum of forces
 %Second Equation represents sum of moments
 eqn1=fA+fB+Wab==0;
-eqn2=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==0; %DOUBLE CHECK ORDER OF CROSS
+eqn2=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==0;
 %Link BC
 eqn3=fB+fC+Wbc==0;
 eqn4=cross(pvBC,fC)+cross(pvHbc,Wbc)==0;
@@ -130,28 +132,69 @@ eqn14=cross(alphaDE,pvDE)+cross(omegaDE,cross(omegaDE,pvDE))+cross(alphaEF,pvEF)
 
 positionsolution= (solve([eqn11,eqn12,eqn13,eqn14],[omegaBCz,omegaDEz,omegaEFz,omegaFGz,alphaBCz,alphaDEz,alphaEFz,alphaFGz]));
 
-angvel_BC=double(positionsolution.omegaBCz)
-angvel_DE=double(positionsolution.omegaDEz)
-angvel_EF=double(positionsolution.omegaEFz)
-angvel_FG=double(positionsolution.omegaFGz)
-angacc_BC=double(positionsolution.alphaBCz)
-angacc_DE=double(positionsolution.alphaDEz)
-angacc_EF=double(positionsolution.alphaEFz)
-angacc_FG=double(positionsolution.alphaFGz)
+angvel_BCz=double(positionsolution.omegaBCz)
+angvel_DEz=double(positionsolution.omegaDEz)
+angvel_EFz=double(positionsolution.omegaEFz)
+angvel_FGz=double(positionsolution.omegaFGz)
+angacc_BCz=double(positionsolution.alphaBCz)
+angacc_DEz=double(positionsolution.alphaDEz)
+angacc_EFz=double(positionsolution.alphaEFz)
+angacc_FGz=double(positionsolution.alphaFGz)
+
+%% extra acceleration values
+
+angvel_BC=[0 0 angvel_BCz];
+angvel_DE=[0 0 angvel_DEz];
+angvel_EF=[0 0 angvel_EFz];
+angvel_FG=[0 0 angvel_FGz];
+angacc_BC=[0 0 angacc_BCz];
+angacc_DE=[0 0 angacc_DEz];
+angacc_EF=[0 0 angacc_EFz];
+angacc_FG=[0 0 angacc_FGz];
+
+accH_AB=cross(alphaAB,pvHab)+cross(omegaAB,cross(omegaAB,pvHab));
+accH_BC=cross(angacc_BC,pvHbc)+cross(angvel_BC,cross(angvel_BC,pvHbc));
+accH_DE=cross(angacc_DE,pvHde)+cross(angvel_DE,cross(angvel_DE,pvHde));
+accH_EF=cross(angacc_EF,pvHef)+cross(angvel_EF,cross(angvel_EF,pvHef));
+accH_GL=cross(angacc_FG,pvHlg)+cross(angvel_FG,cross(angvel_FG,pvHlg));
 
 %% dynamic analysis
-eqn1=fA+fB+Wab==0;
-eqn2=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==0; %DOUBLE CHECK ORDER OF CROSS
-%Link BC
-eqn3=fB+fC+Wbc==0;
-eqn4=cross(pvBC,fC)+cross(pvHbc,Wbc)==0;
-%Link DEC
-eqn5=-fC+fD+fE+Wde==0;
-eqn6=cross(pvDE,fE)+cross(pvHde,Wde)+cross(pvCD,fC)==0;
-%Link EF
-eqn7=-fE+fF+Wef==0;
-eqn8=cross(pvEF,fF)+cross(pvHef,Wef)==0;
-%Link FG with load L
-eqn9=fF+fG+Wfg+Wl==0;
-eqn10=cross(pvFG,fF)+cross(pvLG,Wl)+cross(pvHlg,Wfg)==0;
 
+JAB_A=1/12*(Wab(2)/-9.8)*(linkWidth(2)^2+AB^2)+(Wab(2)/-9.8)*norm(pvHab)^2;
+JBC_B=1/12*(Wbc(2)/-9.8)*(linkWidth(2)^2+BC^2)+(Wbc(2)/-9.8)*norm(pvHbc)^2;
+JDE_D=1/12*(Wde(2)/-9.8)*(linkWidth(2)^2+DE^2)+(Wde(2)/-9.8)*norm(pvHde)^2;
+JEF_E=1/12*(Wef(2)/-9.8)*(linkWidth(2)^2+EF^2)+(Wef(2)/-9.8)*norm(pvHef)^2;
+JLG_G=1/12*(Wfg(2)/-9.8)*(linkWidth(2)^2+LG^2)+(Wfg(2)/-9.8)*norm(pvHlg)^2;
+
+eqn15=fA+fB+Wab==(Wab(2)/-9.8)*accH_AB;
+eqn16=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==JAB_A*alphaAB;
+%Link BC
+eqn17=fB+fC+Wbc==(Wbc(2)/-9.8)*accH_BC;
+eqn18=cross(pvBC,fC)+cross(pvHbc,Wbc)==JBC_B*angacc_BC;
+%Link DEC
+eqn19=-fC+fD+fE+Wde==(Wde(2)/-9.8)*accH_DE;
+eqn20=cross(pvDE,fE)+cross(pvHde,Wde)+cross(pvCD,fC)==JDE_D*angacc_DE;
+%Link EF
+eqn21=-fE+fF+Wef==(Wef(2)/-9.8)*accH_EF;
+eqn22=cross(pvEF,fF)+cross(pvHef,Wef)==JEF_E*angacc_EF;
+%Link FG with load L
+eqn23=fF+fG+Wfg+Wl==(Wfg(2)/-9.8)*accH_GL;
+eqn24=cross(pvFG,fF)+cross(pvLG,Wl)+cross(pvHlg,Wfg)==JLG_G*angacc_FG;
+
+dynamicsolution = (solve([eqn15,eqn16,eqn17,eqn18,eqn19,eqn20,eqn21,eqn22,eqn23,eqn24],[Ax,Ay,Bx,By,Cx,Cy,Dx,Dy,Ex,Ey,Fx,Fy,Gx,Gy,inTorque]));
+
+dynamicforce_Ax=double(dynamicsolution.Ax)
+dynamicforce_Ay=double(dynamicsolution.Ay)
+dynamicforce_Bx=double(dynamicsolution.Bx)
+dynamicforce_By=double(dynamicsolution.By)
+dynamicforce_Cx=double(dynamicsolution.Cx)
+dynamicforce_Cy=double(dynamicsolution.Cy)
+dynamicforce_Dx=double(dynamicsolution.Dx)
+dynamicforce_Dy=double(dynamicsolution.Dy)
+dynamicforce_Ex=double(dynamicsolution.Ex)
+dynamicforce_Ey=double(dynamicsolution.Ey)
+dynamicforce_Fx=double(dynamicsolution.Fx)
+dynamicforce_Fy=double(dynamicsolution.Fy)
+dynamicforce_Gx=double(dynamicsolution.Gx)
+dynamicforce_Gy=double(dynamicsolution.Gy)
+dynamictorque_T=double(dynamicsolution.inTorque)
