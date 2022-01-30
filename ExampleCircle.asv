@@ -16,6 +16,7 @@ AB=norm(B-A);
 BC=norm(C-B);
 CD=norm(D-C);
 CE=norm(E-C);
+DE=norm(E-D);
 BE=norm(E-B);
 EF=norm(F-E);
 FG=norm(G-F);
@@ -72,7 +73,7 @@ if circIntersect_x==0 && circIntersect_y==0 % if the circles are not intersectin
     
     %new position of E
     
-    [E_x,E_y]=circcirc(B_new(1),B_new(2),BE,C_new(1),C_new(2),CE);
+    [E_x,E_y]=circcirc(C_new(1),C_new(2),CE,D(1),D(2),DE);
     
     %checking if circles are not intersecting
 
@@ -210,49 +211,73 @@ theta = 0:1:360
     ax1= subplot(2,2,1);
     plot(newB_x,newB_y);
     title(ax1,'Joint B')
+    xlabel('Position [m]')
+    ylabel('Position [m]')
     ax2=  subplot(2,2,2);
     plot(newC_x,newC_y);
     title(ax2,'Joint C')
+    xlabel('Position [m]')
+    ylabel('Position [m]')
     ax3=  subplot(2,2,3);
     plot(newE_x,newE_y);
     title(ax3,'Joint E')
+    xlabel('Position [m]')
+    ylabel('Position [m]')
     ax4=  subplot(2,2,4);
     plot(newF_x,newF_y);
     title(ax4,'Joint F')
+    xlabel('Position [m]')
+    ylabel('Position [m]')
     
 figure('name','Static Joint Forces/Torque');
 ax1= subplot(3,3,1);
 plot(theta,statics(1,:),theta,statics(2,:));
 title(ax1,'Forces on Joint A')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,2);
 plot(theta,statics(3,:),theta,statics(4,:));
 title(ax1,'Forces on Joint B')
 legend('X Force','Y Force','Location','northeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,3);
 plot(theta,statics(5,:),theta,statics(6,:));
 title(ax1,'Forces on Joint C')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,4);
 plot(theta,statics(7,:),theta,statics(8,:));
 title(ax1,'Forces on Joint D')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,5);
 plot(theta,statics(9,:),theta,statics(10,:));
 title(ax1,'Forces on Joint E')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,6);
 plot(theta,statics(11,:),theta,statics(12,:));
 title(ax1,'Forces on Joint F')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,7);
 plot(theta,statics(13,:),theta,statics(14,:));
 title(ax1,'Forces on Joint G')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,8);
 plot(theta,statics(15,:));
 title(ax1,'Torque on Joint A')
 legend('Torque','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Torque [N-m]')
 
 %Dynamic Graphs
 figure('name','Dynamic Joint Forces/Torque');
@@ -260,76 +285,89 @@ ax1= subplot(3,3,1);
 plot(theta,dynamics(1,:),theta,dynamics(2,:));
 title(ax1,'Forces on Joint A')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,2);
 plot(theta,dynamics(3,:),theta,dynamics(4,:));
 title(ax1,'Forces on Joint B')
 legend('X Force','Y Force','Location','northeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,3);
 plot(theta,dynamics(5,:),theta,dynamics(6,:));
 title(ax1,'Forces on Joint C')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,4);
 plot(theta,dynamics(7,:),theta,dynamics(8,:));
 title(ax1,'Forces on Joint D')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,5);
 plot(theta,dynamics(9,:),theta,dynamics(10,:));
 title(ax1,'Forces on Joint E')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,6);
 plot(theta,dynamics(11,:),theta,dynamics(12,:));
 title(ax1,'Forces on Joint F')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,7);
 plot(theta,dynamics(13,:),theta,dynamics(14,:));
 title(ax1,'Forces on Joint G')
 legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Force [N]')
 ax1= subplot(3,3,8);
 plot(theta,dynamics(15,:));
 title(ax1,'Torque on Joint A')
 legend('Torque','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Torque [N-m]')
 
 %Angular Accel/Velocity Graphs
-[angvel_BCz;angvel_DEz;angvel_EFz;angvel_FGz;
-                    angacc_BCz;angacc_DEz;angacc_EFz;angacc_FGz];
-Figure('name','Angular Accelerations and Velocities');
+figure('name','Angular Accelerations and Velocities');
 ax1= subplot(2,4,1);
 plot(theta,positions(1,:));
 title(ax1,'Angular Vel of link BC')
-legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Angular Velocity [rad/s]')
 ax1= subplot(2,4,2);
 plot(theta,positions(1,:));
 title(ax1,'Angular Vel of link DE')
-legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Angular Velocity [rad/s]')
 ax1= subplot(2,4,3);
 plot(theta,positions(3,:));
 title(ax1,'Angular Vel of link EF')
-legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Angular Velocity [rad/s]')
 ax1= subplot(2,4,4);
 plot(theta,positions(4,:));
 title(ax1,'Angular Vel of link FG')
-legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Angular Velocity [rad/s]')
 
 ax1= subplot(2,4,5);
 plot(theta,positions(5,:));
 title(ax1,'Angular Accel of link BC')
-legend('X Force','Y Force','Location','southeast');
+xlabel('Angular Displacement [deg]')
+ylabel('Angular Velocity [rad/s]')
 ax1= subplot(2,4,6);
 plot(theta,positions(6,:));
 title(ax1,'Angular Accel of link DE')
-legend('X Force','Y Force','Location','southeast');
 ax1= subplot(2,4,7);
 plot(theta,positions(7,:));
 title(ax1,'Angular Accel of link EF')
-legend('X Force','Y Force','Location','southeast');
 ax1= subplot(2,4,8);
-plot(theta,positions(4,:));
+plot(theta,positions(8,:));
 title(ax1,'Angular Accel of link FG')
-legend('X Force','Y Force','Location','southeast');
 
-
-    
- %Plot Static Joint Forces
 %% 
 function values = linkageAnalysis(JB,JC,JE,JF)
 %% Static Analysis
@@ -378,12 +416,12 @@ pvDE=E-D;
 pvEF=F-E;
 pvFG=G-F;
 
-unit_GF= pvFG/FG;
-L=unit_GF*LF; %location of load
-Hlg = [((L(1,1) + G(1,1)) / 2) ((L(1,2) + G(1,2)) / 2) 0];
-pvHlg = G-Hlg;
-pvLG=G-L; %load
-
+unit_GF=-pvFG/FG;
+pvFL=unit_GF*LF; 
+pvGL=pvFL-pvFG; %load from G to L
+L=pvGL+G; %location of load
+Hlg = [((L(1,1) + G(1,1)) / 2) ((L(1,2) + G(1,2)) / 2) 0]; % location of COM
+pvHlg = Hlg-G; % position of COM from G to Hlg
 
 %without weight of each link considered
 syms Ax Ay Bx By Cx Cy Dx Dy Ex Ey Fx Fy Gx Gy inTorque
@@ -412,22 +450,22 @@ Wl = [0 -200 0] ; %given weight of load in NEWTONS
 %Link AB/1
 %First equation represents sum of forces
 %Second Equation represents sum of moments
-eqn1=fA+fB+Wab==0;
-eqn2=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==0;
+eqn1=fA-fB+Wab==0;
+eqn2=Ta+cross(pvHab,Wab)+cross(pvAB,-fB)==0;
 %Link BC
-eqn3=fB+fC+Wbc==0;
-eqn4=cross(pvBC,fC)+cross(pvHbc,Wbc)==0;
+eqn3=fB-fC+Wbc==0;
+eqn4=cross(pvBC,-fC)+cross(pvHbc,Wbc)==0;
 %Link DEC
-eqn5=-fC+fD+fE+Wde==0;
-eqn6=cross(pvDE,fE)+cross(pvHde,Wde)+cross(pvCD,fC)==0;
+eqn5=fC-fD+fE+Wde==0;
+eqn6=cross(pvDE,fE)+cross(pvHde,Wde)+cross(-pvCD,fC)==0;
 %Link EF
 eqn7=-fE+fF+Wef==0;
 eqn8=cross(pvEF,fF)+cross(pvHef,Wef)==0;
 %Link FG with load L
-eqn9=fF+fG+Wfg+Wl==0;
-eqn10=cross(pvFG,fF)+cross(pvLG,Wl)+cross(pvHlg,Wfg)==0;
+eqn9=-fF+fG+Wfg+Wl==0;
+eqn10=cross(-pvFG,-fF)+cross(pvGL,Wl)+cross(pvHlg,Wfg)==0;
 
-staticsolution = (solve([eqn1,eqn2,eqn3,eqn4,eqn5,eqn6,eqn7,eqn8,eqn9, eqn10],[Ax,Ay,Bx,By,Cx,Cy,Dx,Dy,Ex,Ey,Fx,Fy,Gx,Gy,inTorque]));
+staticsolution = (solve([eqn1,eqn2,eqn3,eqn4,eqn5,eqn6,eqn7,eqn8,eqn9,eqn10],[Ax,Ay,Bx,By,Cx,Cy,Dx,Dy,Ex,Ey,Fx,Fy,Gx,Gy,inTorque]));
 
 noWeightforce_Ax=double(staticsolution.Ax);
 noWeightforce_Ay=double(staticsolution.Ay);
@@ -510,20 +548,20 @@ JDE_D=1/12*(Wde(2)/-9.8)*(linkWidth(2)^2+DE^2)+(Wde(2)/-9.8)*norm(pvHde)^2;
 JEF_E=1/12*(Wef(2)/-9.8)*(linkWidth(2)^2+EF^2)+(Wef(2)/-9.8)*norm(pvHef)^2;
 JLG_G=1/12*(Wfg(2)/-9.8)*(linkWidth(2)^2+(LF+FG)^2)+(Wfg(2)/-9.8)*norm(pvHlg)^2;
 
-eqn15=fA+fB+Wab==(Wab(2)/-9.8)*accH_AB;
-eqn16=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==JAB_A*alphaAB;
+eqn15=fA-fB+Wab==(Wab(2)/-9.8)*accH_AB;
+eqn16=Ta+cross(pvHab,Wab)+cross(pvAB,-fB)==JAB_A*alphaAB;
 %Link BC
-eqn17=fB+fC+Wbc==(Wbc(2)/-9.8)*accH_BC;
-eqn18=cross(pvBC,fC)+cross(pvHbc,Wbc)==JBC_B*angacc_BC;
+eqn17=fB-fC+Wbc==(Wbc(2)/-9.8)*accH_BC;
+eqn18=cross(pvBC,-fC)+cross(pvHbc,Wbc)==JBC_B*angacc_BC;
 %Link DEC
-eqn19=-fC+fD+fE+Wde==(Wde(2)/-9.8)*accH_DE;
-eqn20=cross(pvDE,fE)+cross(pvHde,Wde)+cross(pvCD,fC)==JDE_D*angacc_DE;
+eqn19=fC-fD+fE+Wde==(Wde(2)/-9.8)*accH_DE;
+eqn20=cross(pvDE,fE)+cross(pvHde,Wde)+cross(-pvCD,fC)==JDE_D*angacc_DE;
 %Link EF
 eqn21=-fE+fF+Wef==(Wef(2)/-9.8)*accH_EF;
 eqn22=cross(pvEF,fF)+cross(pvHef,Wef)==JEF_E*angacc_EF;
 %Link FG with load L
-eqn23=fF+fG+Wfg+Wl==(Wfg(2)/-9.8)*accH_GL;
-eqn24=cross(pvFG,fF)+cross(pvLG,Wl)+cross(pvHlg,Wfg)==JLG_G*angacc_FG;
+eqn23=-fF+fG+Wfg+Wl==(Wfg(2)/-9.8)*accH_GL;
+eqn24=cross(-pvFG,-fF)+cross(pvGL,Wl)+cross(pvHlg,Wfg)==JLG_G*angacc_FG;
 
 dynamicsolution = (solve([eqn15,eqn16,eqn17,eqn18,eqn19,eqn20,eqn21,eqn22,eqn23,eqn24],[Ax,Ay,Bx,By,Cx,Cy,Dx,Dy,Ex,Ey,Fx,Fy,Gx,Gy,inTorque]));
 
