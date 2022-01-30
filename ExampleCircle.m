@@ -1,7 +1,6 @@
 clc 
 clear
 
-%Make this pretty
 %coordinates of joints
 A=[1.4 .485 0];
 B=[1.67 0.99 0];
@@ -16,6 +15,7 @@ AB=norm(B-A);
 BC=norm(C-B);
 CD=norm(D-C);
 CE=norm(E-C);
+DE=norm(E-D);
 BE=norm(E-B);
 EF=norm(F-E);
 FG=norm(G-F);
@@ -33,30 +33,17 @@ else
     angleAB_horizontal = initialAngle_AB;
 end 
 
-
     
-for theta=0:1:360
-theta
-
-    
+for theta=0:1:360    
 %position analysis
-
-
 %increase by 1 deg
-
 %new position of B
 B_new = vpa(A+[AB*cos(angleAB_horizontal+deg2rad(theta)) AB*sin(angleAB_horizontal+deg2rad(theta)) 0]);
-
 %new position of C
-
 [C_x,C_y]=circcirc(B_new(1),B_new(2),BC,D(1),D(2),CD);
-
 %checking if circles are not intersecting
-
 circIntersect_x = any(isnan(vpa(C_x))); %checking for Not-a-Number
 circIntersect_y = any(isnan(vpa(C_y)));
-
-
 
 if circIntersect_x==0 && circIntersect_y==0 % if the circles are not intersecting
     C_1=[C_x(1) C_y(1) 0]; %adding the two solutions
@@ -139,183 +126,48 @@ if circIntersect_x==0 && circIntersect_y==0 % if the circles are not intersectin
 
         else 
             figure
-             
-              ax1= subplot(2,2,1);
-              plot(newB_x,newB_y);
-              title(ax1,'Joint B')
-              ax2=  subplot(2,2,2);
-               plot(newC_x,newC_y);
-                title(ax2,'Joint C')
-               ax3=  subplot(2,2,3);
-              plot(newE_x,newE_y);
-                title(ax3,'Joint E')
-             ax4=  subplot(2,2,4);
-              plot(newF_x,newF_y);
-                title(ax4,'Joint F')
-                
-           
-                
-                
-              fprintf('New position cannot be determined at this angle from the initial: %d',theta);
-              return 
+
+            ax1= subplot(2,2,1);
+            plot(newB_x,newB_y);
+            title(ax1,'Joint B')
+            ax2=  subplot(2,2,2);
+            plot(newC_x,newC_y);
+            title(ax2,'Joint C')
+            ax3=  subplot(2,2,3);
+            plot(newE_x,newE_y);
+            title(ax3,'Joint E')
+            ax4=  subplot(2,2,4);
+            plot(newF_x,newF_y);
+            title(ax4,'Joint F')
+            fprintf('New position cannot be determined at this angle from the initial: %d',theta);
+            return 
         end 
-    
     else 
      fprintf('New position cannot be determined at this angle  from the initial: %d',theta);
     return 
     end 
-    
-    
-    
 else 
     fprintf('New position cannot be determined at this angle: %d',theta);
     return 
 end 
 
-
-
-%end of position analysis
-
-%Next Force analysis using Static Equilibrium
-
-%Loop Equations: Angular Velocity Calculation
-
-%Joint Velocity Calculation
-
-%Loop Equations: Angular Acceleration Calculation
-
-%Joint Acceleration Calculation
-
-%Acceleration at Mass Center
-
-%Force Analysis using Newton's law
-
+%Calculate and record updated joint parameters
 values = linkageAnalysis(B,C,E,F);
 statics(:,theta+1) = values.staticSol.';
-positions(:,theta+1) = values.posSol.';
+angulars(:,theta+1) = values.angSol.';
 dynamics(:,theta+1) = values.dynamicSol.';
 
-
-
+%Update joint Positions
 B=B_new;
 C=C_new;
 E=E_new;
 F=F_new;
 
 end
-%% Plots
-%Plot Joint Positions
-theta = 0:1:360
-    figure
-    ax1= subplot(2,2,1);
-    plot(newB_x,newB_y);
-    title(ax1,'Joint B')
-    ax2=  subplot(2,2,2);
-    plot(newC_x,newC_y);
-    title(ax2,'Joint C')
-    ax3=  subplot(2,2,3);
-    plot(newE_x,newE_y);
-    title(ax3,'Joint E')
-    ax4=  subplot(2,2,4);
-    plot(newF_x,newF_y);
-    title(ax4,'Joint F')
-    
-figure('name','Static Joint Forces/Torque');
-ax1= subplot(3,3,1);
-plot(theta,statics(1,:),theta,statics(2,:));
-title(ax1,'Forces on Joint A')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,2);
-plot(theta,statics(3,:),theta,statics(4,:));
-title(ax1,'Forces on Joint B')
-legend('X Force','Y Force','Location','northeast');
-ax1= subplot(3,3,3);
-plot(theta,statics(5,:),theta,statics(6,:));
-title(ax1,'Forces on Joint C')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,4);
-plot(theta,statics(7,:),theta,statics(8,:));
-title(ax1,'Forces on Joint D')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,5);
-plot(theta,statics(9,:),theta,statics(10,:));
-title(ax1,'Forces on Joint E')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,6);
-plot(theta,statics(11,:),theta,statics(12,:));
-title(ax1,'Forces on Joint F')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,7);
-plot(theta,statics(13,:),theta,statics(14,:));
-title(ax1,'Forces on Joint G')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,8);
-plot(theta,statics(15,:));
-title(ax1,'Torque on Joint A')
-legend('Torque','Location','southeast');
 
-%Dynamic Graphs
-figure('name','Dynamic Joint Forces/Torque');
-ax1= subplot(3,3,1);
-plot(theta,dynamics(1,:),theta,dynamics(2,:));
-title(ax1,'Forces on Joint A')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,2);
-plot(theta,dynamics(3,:),theta,dynamics(4,:));
-title(ax1,'Forces on Joint B')
-legend('X Force','Y Force','Location','northeast');
-ax1= subplot(3,3,3);
-plot(theta,dynamics(5,:),theta,dynamics(6,:));
-title(ax1,'Forces on Joint C')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,4);
-plot(theta,dynamics(7,:),theta,dynamics(8,:));
-title(ax1,'Forces on Joint D')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,5);
-plot(theta,dynamics(9,:),theta,dynamics(10,:));
-title(ax1,'Forces on Joint E')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,6);
-plot(theta,dynamics(11,:),theta,dynamics(12,:));
-title(ax1,'Forces on Joint F')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,7);
-plot(theta,dynamics(13,:),theta,dynamics(14,:));
-title(ax1,'Forces on Joint G')
-legend('X Force','Y Force','Location','southeast');
-ax1= subplot(3,3,8);
-plot(theta,dynamics(15,:));
-title(ax1,'Torque on Joint A')
-legend('Torque','Location','southeast');
-
-%Angular Accel/Velocity Graphs
-figure('name','Angular Accelerations and Velocities');
-ax1= subplot(2,4,1);
-plot(theta,positions(1,:));
-title(ax1,'Angular Vel of link BC')
-ax1= subplot(2,4,2);
-plot(theta,positions(1,:));
-title(ax1,'Angular Vel of link DE')
-ax1= subplot(2,4,3);
-plot(theta,positions(3,:));
-title(ax1,'Angular Vel of link EF')
-ax1= subplot(2,4,4);
-plot(theta,positions(4,:));
-title(ax1,'Angular Vel of link FG')
-
-ax1= subplot(2,4,5);
-plot(theta,positions(5,:));
-title(ax1,'Angular Accel of link BC')
-ax1= subplot(2,4,6);
-plot(theta,positions(6,:));
-title(ax1,'Angular Accel of link DE')
-ax1= subplot(2,4,7);
-plot(theta,positions(7,:));
-title(ax1,'Angular Accel of link EF')
-ax1= subplot(2,4,8);
-plot(theta,positions(8,:));
-title(ax1,'Angular Accel of link FG')
+%% Plot final joint parameters
+jointPos = [newB_x;newB_y;newC_x;newC_y;newE_x;newE_y;newF_x;newF_y]
+plotJoints(statics,angulars,dynamics);
 
 %% 
 function values = linkageAnalysis(JB,JC,JE,JF)
@@ -469,7 +321,9 @@ angacc_EFz=double(positionsolution.alphaEFz);
 angacc_FGz=double(positionsolution.alphaFGz);
 
 positionsolution = [angvel_BCz;angvel_DEz;angvel_EFz;angvel_FGz;
-                    angacc_BCz;angacc_DEz;angacc_EFz;angacc_FGz];
+                    angacc_BCz;angacc_DEz;angacc_EFz;angacc_FGz;
+                    angvel_BCz*BC;angvel_DEz*DE;angvel_EFz*EF;angvel_FGz*FG;
+                    angacc_BCz*BC;angacc_DEz*DE;angacc_EFz*EF;angacc_FGz*FG];
 
 
 %% extra acceleration values
@@ -535,6 +389,152 @@ dynamicsolution = [dynamicforce_Ax;dynamicforce_Ay;dynamicforce_Bx;dynamicforce_
     dynamicforce_Gx;dynamicforce_Gy;dynamictorque_T];
 
 values.staticSol = staticsolution;
-values.posSol = positionsolution;
+values.angSol = positionsolution;
 values.dynamicSol = dynamicsolution;
+end
+
+function plotJoints(jointPos,statics,angulars,dynamics)
+%% Plots
+%Plot Joint Positions
+theta = 0:1:360
+figure
+ax1= subplot(2,2,1);
+plot(jointPos(1),jointPos(2));
+title(ax1,'Joint B')
+ax2=  subplot(2,2,2);
+plot(jointPos(3),jointPos(4));
+title(ax2,'Joint C')
+ax3=  subplot(2,2,3);
+plot(jointPos(5),jointPos(6));
+title(ax3,'Joint E')
+ax4=  subplot(2,2,4);
+plot(jointPos(7),jointPos(8));
+title(ax4,'Joint F')
+    
+%Plot Static Forces/Torque
+figure('name','Static Joint Forces/Torque');
+ax1= subplot(3,3,1);
+plot(theta,statics(1,:),theta,statics(2,:));
+title(ax1,'Forces on Joint A')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,2);
+plot(theta,statics(3,:),theta,statics(4,:));
+title(ax1,'Forces on Joint B')
+legend('X Force','Y Force','Location','northeast');
+ax1= subplot(3,3,3);
+plot(theta,statics(5,:),theta,statics(6,:));
+title(ax1,'Forces on Joint C')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,4);
+plot(theta,statics(7,:),theta,statics(8,:));
+title(ax1,'Forces on Joint D')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,5);
+plot(theta,statics(9,:),theta,statics(10,:));
+title(ax1,'Forces on Joint E')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,6);
+plot(theta,statics(11,:),theta,statics(12,:));
+title(ax1,'Forces on Joint F')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,7);
+plot(theta,statics(13,:),theta,statics(14,:));
+title(ax1,'Forces on Joint G')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,8);
+plot(theta,statics(15,:));
+title(ax1,'Torque on Joint A')
+legend('Torque','Location','southeast');
+
+%Dynamic Graphs
+figure('name','Dynamic Joint Forces/Torque');
+ax1= subplot(3,3,1);
+plot(theta,dynamics(1,:),theta,dynamics(2,:));
+title(ax1,'Forces on Joint A')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,2);
+plot(theta,dynamics(3,:),theta,dynamics(4,:));
+title(ax1,'Forces on Joint B')
+legend('X Force','Y Force','Location','northeast');
+ax1= subplot(3,3,3);
+plot(theta,dynamics(5,:),theta,dynamics(6,:));
+title(ax1,'Forces on Joint C')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,4);
+plot(theta,dynamics(7,:),theta,dynamics(8,:));
+title(ax1,'Forces on Joint D')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,5);
+plot(theta,dynamics(9,:),theta,dynamics(10,:));
+title(ax1,'Forces on Joint E')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,6);
+plot(theta,dynamics(11,:),theta,dynamics(12,:));
+title(ax1,'Forces on Joint F')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,7);
+plot(theta,dynamics(13,:),theta,dynamics(14,:));
+title(ax1,'Forces on Joint G')
+legend('X Force','Y Force','Location','southeast');
+ax1= subplot(3,3,8);
+plot(theta,dynamics(15,:));
+title(ax1,'Torque on Joint A')
+legend('Torque','Location','southeast');
+
+%Angular Accel/Velocity Graphs
+figure('name','Angular Accelerations and Velocities');
+ax1= subplot(2,4,1);
+plot(theta,angulars(1,:));
+title(ax1,'Angular Vel of link BC')
+ax1= subplot(2,4,2);
+plot(theta,angulars(1,:));
+title(ax1,'Angular Vel of link DE')
+ax1= subplot(2,4,3);
+plot(theta,angulars(3,:));
+title(ax1,'Angular Vel of link EF')
+ax1= subplot(2,4,4);
+plot(theta,angulars(4,:));
+title(ax1,'Angular Vel of link FG')
+
+ax1= subplot(2,4,5);
+plot(theta,angulars(5,:));
+title(ax1,'Angular Accel of link BC')
+ax1= subplot(2,4,6);
+plot(theta,angulars(6,:));
+title(ax1,'Angular Accel of link DE')
+ax1= subplot(2,4,7);
+plot(theta,angulars(7,:));
+title(ax1,'Angular Accel of link EF')
+ax1= subplot(2,4,8);
+plot(theta,angulars(8,:));
+title(ax1,'Angular Accel of link FG')
+
+%Linear Accel/Velocity Graphs
+figure('name','Linear Accelerations and Velocities');
+ax1= subplot(2,4,1);
+plot(theta,angulars(9,:));
+title(ax1,'Linear Vel of link BC')
+ax1= subplot(2,4,2);
+plot(theta,angulars(10,:));
+title(ax1,'Linear Vel of link DE')
+ax1= subplot(2,4,3);
+plot(theta,angulars(11,:));
+title(ax1,'Linear Vel of link EF')
+ax1= subplot(2,4,4);
+plot(theta,angulars(12,:));
+title(ax1,'Linear Vel of link FG')
+
+ax1= subplot(2,4,5);
+plot(theta,angulars(13,:));
+title(ax1,'Linear Accel of link BC')
+ax1= subplot(2,4,6);
+plot(theta,angulars(14,:));
+title(ax1,'Linear Accel of link DE')
+ax1= subplot(2,4,7);
+plot(theta,angulars(15,:));
+title(ax1,'Linear Accel of link EF')
+ax1= subplot(2,4,8);
+plot(theta,angulars(16,:));
+title(ax1,'Linear Accel of link FG')
+
 end
