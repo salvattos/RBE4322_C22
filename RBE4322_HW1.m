@@ -1,6 +1,17 @@
 clear;
 clc;
-pi = 3.14;
+%% Initial Position calculations
+A=[1.4 .485 0];
+B=[1.67 0.99 0];
+C=[.255  1.035 0];
+D=[.285 .055 0];
+E=[.195 2.54 0];
+F=[-.98 2.57 0];
+G=[.05 .2 0];
+
+values = linkageAnalysis(B,C,E,F);
+
+
 
 %% Static Analysis
 %Make this pretty
