@@ -46,12 +46,12 @@ pvDE=E-D;
 pvEF=F-E;
 pvFG=G-F;
 
-unit_GF= pvFG/FG;
-L=unit_GF*LF; %location of load
-Hlg = [((L(1,1) + G(1,1)) / 2) ((L(1,2) + G(1,2)) / 2) 0];
-pvHlg = G-Hlg;
-pvLG=G-L; %load
-
+unit_GF=-pvFG/FG;
+pvFL=unit_GF*LF; 
+pvGL=pvFL-pvFG; %load from G to L
+L=pvGL+G; %location of load
+Hlg = [((L(1,1) + G(1,1)) / 2) ((L(1,2) + G(1,2)) / 2) 0]; % location of COM
+pvHlg = Hlg-G; % position of COM from G to Hlg
 
 %without weight of each link considered
 syms Ax Ay Bx By Cx Cy Dx Dy Ex Ey Fx Fy Gx Gy inTorque
@@ -80,22 +80,22 @@ Wl = [0 -200 0] ; %given weight of load in NEWTONS
 %Link AB/1
 %First equation represents sum of forces
 %Second Equation represents sum of moments
-eqn1=fA+fB+Wab==0;
-eqn2=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==0;
+eqn1=fA-fB+Wab==0;
+eqn2=Ta+cross(pvHab,Wab)+cross(pvAB,-fB)==0;
 %Link BC
-eqn3=fB+fC+Wbc==0;
-eqn4=cross(pvBC,fC)+cross(pvHbc,Wbc)==0;
+eqn3=fB-fC+Wbc==0;
+eqn4=cross(pvBC,-fC)+cross(pvHbc,Wbc)==0;
 %Link DEC
-eqn5=-fC+fD+fE+Wde==0;
-eqn6=cross(pvDE,fE)+cross(pvHde,Wde)+cross(pvCD,fC)==0;
+eqn5=fC-fD+fE+Wde==0;
+eqn6=cross(pvDE,fE)+cross(pvHde,Wde)+cross(-pvCD,fC)==0;
 %Link EF
 eqn7=-fE+fF+Wef==0;
 eqn8=cross(pvEF,fF)+cross(pvHef,Wef)==0;
 %Link FG with load L
-eqn9=fF+fG+Wfg+Wl==0;
-eqn10=cross(pvFG,fF)+cross(pvLG,Wl)+cross(pvHlg,Wfg)==0;
+eqn9=-fF+fG+Wfg+Wl==0;
+eqn10=cross(-pvFG,-fF)+cross(pvGL,Wl)+cross(pvHlg,Wfg)==0;
 
-staticsolution = (solve([eqn1,eqn2,eqn3,eqn4,eqn5,eqn6,eqn7,eqn8,eqn9, eqn10],[Ax,Ay,Bx,By,Cx,Cy,Dx,Dy,Ex,Ey,Fx,Fy,Gx,Gy,inTorque]));
+staticsolution = (solve([eqn1,eqn2,eqn3,eqn4,eqn5,eqn6,eqn7,eqn8,eqn9,eqn10],[Ax,Ay,Bx,By,Cx,Cy,Dx,Dy,Ex,Ey,Fx,Fy,Gx,Gy,inTorque]));
 
 noWeightforce_Ax=double(staticsolution.Ax)
 noWeightforce_Ay=double(staticsolution.Ay)
@@ -169,20 +169,20 @@ JDE_D=1/12*(Wde(2)/-9.8)*(linkWidth(2)^2+DE^2)+(Wde(2)/-9.8)*norm(pvHde)^2;
 JEF_E=1/12*(Wef(2)/-9.8)*(linkWidth(2)^2+EF^2)+(Wef(2)/-9.8)*norm(pvHef)^2;
 JLG_G=1/12*(Wfg(2)/-9.8)*(linkWidth(2)^2+(LF+FG)^2)+(Wfg(2)/-9.8)*norm(pvHlg)^2;
 
-eqn15=fA+fB+Wab==(Wab(2)/-9.8)*accH_AB;
-eqn16=Ta+cross(pvHab,Wab)+cross(pvAB,fB)==JAB_A*alphaAB;
+eqn15=fA-fB+Wab==(Wab(2)/-9.8)*accH_AB;
+eqn16=Ta+cross(pvHab,Wab)+cross(pvAB,-fB)==JAB_A*alphaAB;
 %Link BC
-eqn17=fB+fC+Wbc==(Wbc(2)/-9.8)*accH_BC;
-eqn18=cross(pvBC,fC)+cross(pvHbc,Wbc)==JBC_B*angacc_BC;
+eqn17=fB-fC+Wbc==(Wbc(2)/-9.8)*accH_BC;
+eqn18=cross(pvBC,-fC)+cross(pvHbc,Wbc)==JBC_B*angacc_BC;
 %Link DEC
-eqn19=-fC+fD+fE+Wde==(Wde(2)/-9.8)*accH_DE;
-eqn20=cross(pvDE,fE)+cross(pvHde,Wde)+cross(pvCD,fC)==JDE_D*angacc_DE;
+eqn19=fC-fD+fE+Wde==(Wde(2)/-9.8)*accH_DE;
+eqn20=cross(pvDE,fE)+cross(pvHde,Wde)+cross(-pvCD,fC)==JDE_D*angacc_DE;
 %Link EF
 eqn21=-fE+fF+Wef==(Wef(2)/-9.8)*accH_EF;
 eqn22=cross(pvEF,fF)+cross(pvHef,Wef)==JEF_E*angacc_EF;
 %Link FG with load L
-eqn23=fF+fG+Wfg+Wl==(Wfg(2)/-9.8)*accH_GL;
-eqn24=cross(pvFG,fF)+cross(pvLG,Wl)+cross(pvHlg,Wfg)==JLG_G*angacc_FG;
+eqn23=-fF+fG+Wfg+Wl==(Wfg(2)/-9.8)*accH_GL;
+eqn24=cross(-pvFG,-fF)+cross(pvGL,Wl)+cross(pvHlg,Wfg)==JLG_G*angacc_FG;
 
 dynamicsolution = (solve([eqn15,eqn16,eqn17,eqn18,eqn19,eqn20,eqn21,eqn22,eqn23,eqn24],[Ax,Ay,Bx,By,Cx,Cy,Dx,Dy,Ex,Ey,Fx,Fy,Gx,Gy,inTorque]));
 
