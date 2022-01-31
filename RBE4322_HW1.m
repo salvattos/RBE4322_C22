@@ -36,7 +36,8 @@ else
 end 
 
 %Iterate through 360 degrees
-for theta=0:1:360  
+for theta=0:1:360 
+theta
 %position analysis
 %increase by 1 deg
 %new position of B
@@ -322,8 +323,8 @@ angacc_FGz=double(positionsolution.alphaFGz);
 
 positionsolution = [angvel_BCz;angvel_DEz;angvel_EFz;angvel_FGz;
                     angacc_BCz;angacc_DEz;angacc_EFz;angacc_FGz;
-                    angvel_BCz*BC;angvel_DEz*DE;angvel_EFz*EF;angvel_FGz*FG;
-                    angacc_BCz*BC;angacc_DEz*DE;angacc_EFz*EF;angacc_FGz*FG];
+                    norm(cross(omegaAB,pvAB));norm(cross([0 0 angvel_DEz],-pvCD));norm(cross([0 0 angvel_DEz],pvDE));norm(cross([0 0 angvel_FGz],-pvFG));
+                    norm(cross(alphaAB,pvAB)+cross(omegaAB,cross(omegaAB,pvAB)));norm(cross([0 0 angacc_DEz],-pvCD)+cross([0 0 angvel_DEz],cross([0 0 angvel_DEz],-pvCD)));norm(cross([0 0 angacc_DEz],pvDE)+cross([0 0 angvel_DEz],cross([0 0 angvel_DEz],pvDE)));norm(cross([0 0 angacc_FGz],-pvFG)+cross([0 0 angvel_FGz],cross([0 0 angvel_FGz],-pvFG)))];
 
 
 %extra acceleration values
@@ -571,44 +572,44 @@ ylabel('Angular Acceleration [rad/s^2]')
 figure('name','Linear Accelerations and Velocities');
 ax1= subplot(2,4,1);
 plot(theta,angulars(9,:));
-title(ax1,'Linear Vel of link BC')
+title(ax1,'Linear Vel of Joint B')
 xlabel('Angular Displacement [deg]')
 ylabel('Linear Velocity [m/s]')
 ax1= subplot(2,4,2);
 plot(theta,angulars(10,:));
-title(ax1,'Linear Vel of link DE')
+title(ax1,'Linear Vel of Joint C')
 xlabel('Angular Displacement [deg]')
 ylabel('Linear Velocity [m/s]')
 ax1= subplot(2,4,3);
 plot(theta,angulars(11,:));
-title(ax1,'Linear Vel of link EF')
+title(ax1,'Linear Vel of Joint E')
 xlabel('Angular Displacement [deg]')
 ylabel('Linear Velocity [m/s]')
 ax1= subplot(2,4,4);
 plot(theta,angulars(12,:));
-title(ax1,'Linear Vel of link FG')
+title(ax1,'Linear Vel of Joint F')
 xlabel('Angular Displacement [deg]')
 ylabel('Linear Velocity [m/s]')
 
 %Plot acceleration
 ax1= subplot(2,4,5);
 plot(theta,angulars(13,:));
-title(ax1,'Linear Accel of link BC')
+title(ax1,'Linear Accel of Joint B')
 xlabel('Angular Displacement [deg]')
 ylabel('Linear Acceleration [m/s^2]')
 ax1= subplot(2,4,6);
 plot(theta,angulars(14,:));
-title(ax1,'Linear Accel of link DE')
+title(ax1,'Linear Accel of Joint C')
 xlabel('Angular Displacement [deg]')
 ylabel('Linear Acceleration [m/s^2]')
 ax1= subplot(2,4,7);
 plot(theta,angulars(15,:));
-title(ax1,'Linear Accel of link EF')
+title(ax1,'Linear Accel of Joint E')
 xlabel('Angular Displacement [deg]')
 ylabel('Linear Acceleration [m/s^2]')
 ax1= subplot(2,4,8);
 plot(theta,angulars(16,:));
-title(ax1,'Linear Accel of link FG')
+title(ax1,'Linear Accel of Joint F')
 xlabel('Angular Displacement [deg]')
 ylabel('Linear Acceleration [m/s^2]')
 
