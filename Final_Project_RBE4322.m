@@ -6,7 +6,7 @@ x0=[0 0 0 0 0 0 0 0 0 0]; %[lambda hR t1 h1 t2 h2 t3 h4 t4 hCR]
 tspan=[0,100]; %time to run variables over
 [t,x]=ode45(@DiffEqSolve, tspan, x0);
 %% Plot
-graphIt(x,t,6);
+graphIt(x,t,5);
 
 
 %% Function
@@ -32,7 +32,7 @@ n = 109; %Motor constant again
 [K1, K2, K3, K4] = deal(806.42, 907.22, 1495.64, 43.38); %All Spring constants
 [Brotor, B1, B2, B3, B4, B5] = deal(0.0005, 0.07, 0.0005,.01,.01,.01); %Bearings
 [B_CR_GR, B_CR_CO, B_CO_RO, B_RO_GR] = deal(.05, .05, .05, .05); %Bearings again
-[Jrotor, J1, J2, J3, J4, J5, JCR, JCO, JRO] = deal(33.16, 1631.70, 0.14,0.50,0.01,1.13,0.17,12.00,0.64); %MMI's
+[Jrotor, J1, J2, J3, J4, J5, JCR, JCO, JRO] = deal(33.16*10^-6, 1631.70*10^-6, 0.14*10^-6, 0.50*10^-6, 0.01*10^-6, 1.13*10^-6, 0.17*10^-6, 12.00*10^-6, 0.64*10^-6); %MMI's
 [N1, N2, N3, N4] = deal(1,50,12,60);
 [MCO] = deal(0.002903582903); %Masses of links NEED
 [r1, r2, r3, r4] = deal(1,2,3,4); %Transformer moduli
