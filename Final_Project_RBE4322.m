@@ -35,8 +35,8 @@ n = 109; %Motor constant again
 [Jrotor, J1, J2, J3, J4, J5, JCR, JCO, JRO] = deal(33.16*10^-6, 1631.70*10^-6, 0.14*10^-6, 0.50*10^-6, 0.01*10^-6, 1.13*10^-6, 0.17*10^-6, 12.00*10^-6, 0.64*10^-6); %MMI's
 [N1, N2, N3, N4] = deal(1,50,12,60);
 [MCO] = deal(0.002903582903); %Masses of links NEED
-[r1, r2, r3, r4] = deal(1,2,3,4); %Transformer moduli
-[r1_P, r2_P, r3_P, r4_P] = deal(1,2,3,4); %Derivative of Transformer moduli
+[r1, r2, r3, r4] = deal(8.99*10^-3, 5.14*10^-3, 0.143, 0.467); %Transformer moduli
+[r1_P, r2_P, r3_P, r4_P] = deal(0,0,0,0); %Derivative of Transformer moduli
 
 %Define differential Eq's
 lambda_P = vT - ((R/L)*lambda);
