@@ -3,14 +3,11 @@
 %% Solve Diff Eqs
 %Define Initital Conditions as array
 x0=[0 0 0 0 0 0 0 0 0 0]; %[lambda hR t1 h1 t2 h2 t3 h4 t4 hCR]
-titles = ["Lambda", "hR", "t1", "h1", "t2", "h2", "t3", "h4", "t4", "hCR"];
 tspan=[0,100]; %time to run variables over
 [t,x]=ode45(@DiffEqSolve, tspan, x0);
 %% Plot
-figure(1)
-plot(t,x(:,10))
-title(titles(10));
-xlabel('Time'); ylabel(titles(10));
+graphIt(x,t,6);
+
 
 %% Function
 %detailed calculations shown in report
@@ -29,17 +26,18 @@ hCR = x(10);
 %Set R prime's to zero to start
 %Define constants
 vT = 24; %Motor Voltage
-R = 150; %Motor Resistance
-L = 100; %Motor inductance
-n = 50; %Motor constant again
-[K1, K2, K3, K4] = deal(1,2,3,4); %All Spring constants
-[Brotor, B1, B2, B3, B4, B5] = deal(1,2,3,4,5,6); %Bearings
-[B_CR_GR, B_CR_CO, B_CO_RO, B_RO_GR] = deal(1,2,3,4); %Bearings again
-[Jrotor, J1, J2, J3, J4, J5, JCR, JCO, JRO] = deal(1,2,3,4,5,6,7,8,9); %MMI's
+R = .522; %Motor Resistance
+L = .625; %Motor inductance
+n = 109; %Motor constant again
+[K1, K2, K3, K4] = deal(806.42, 907.22, 1495.64, 43.38); %All Spring constants
+[Brotor, B1, B2, B3, B4, B5] = deal(0.0005, 0.07, 0.0005,.01,.01,.01); %Bearings
+[B_CR_GR, B_CR_CO, B_CO_RO, B_RO_GR] = deal(.05, .05, .05, .05); %Bearings again
+[Jrotor, J1, J2, J3, J4, J5, JCR, JCO, JRO] = deal(33.16, 1631.70, 0.14,0.50,0.01,1.13,0.17,12.00,0.64); %MMI's
 [N1, N2, N3, N4] = deal(1,50,12,60);
-[MCO] = deal(1); %Masses of links
+[MCO] = deal(1); %Masses of links NEED
 [r1, r2, r3, r4] = deal(1,2,3,4); %Transformer moduli
 [r1_P, r2_P, r3_P, r4_P] = deal(1,2,3,4); %Derivative of Transformer moduli
+
 %Define differential Eq's
 lambda_P = vT - ((R/L)*lambda);
 hR_P = ((n/L)*lambda) - ((Brotor/Jrotor)*hR) - (K1*t1) - (K2*t2);
@@ -54,4 +52,13 @@ hCR_P = (((K4*JCR)/(JCR + (MCO*r1^2) + (MCO*r2^2) + (JCO*r3^2) + (JCO*r4^2)))*t4
 
 
 xprime = [lambda_P; hR_P; t1_P; h1_P; t2_P; h2_P; t3_P; h4_P; t4_P; hCR_P];
+end
+
+function graphIt(x, t, IC)
+    titles = ["Lambda", "hR", "t1", "h1", "t2", "h2", "t3", "h4", "t4", "hCR"];
+    figure;
+    plot(t,x(:,IC))
+    title(titles(IC));
+    xlabel('Time'); ylabel(titles(IC));
+    
 end

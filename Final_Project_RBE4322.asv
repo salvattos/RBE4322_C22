@@ -2,14 +2,12 @@
 % Renée Gruner-Mitchell, Ander Carbajo, Shawn Salvatto, Erik Wegge
 %% Solve Diff Eqs
 %Define Initital Conditions as array
-x0=[0 0 0 0 0 0 0 0 0 0 0]; %[lambda hR t1 h1 t2 h2 t3 h4 t4 hCR]
-tspan=[0,10]; %time to run variables over
+x0=[0 0 0 0 0 0 0 0 0 0]; %[lambda hR t1 h1 t2 h2 t3 h4 t4 hCR]
+tspan=[0,100]; %time to run variables over
 [t,x]=ode45(@DiffEqSolve, tspan, x0);
 %% Plot
 figure(1)
-plot(t,x(:,1))
-title('lambda');
-xlabel('Time'); ylabel('Lambda');
+
 
 %% Function
 %detailed calculations shown in report
@@ -26,17 +24,19 @@ h4 = x(8);
 t4 = x(9);
 hCR = x(10);
 %Set R prime's to zero to start
-
+%Define constants
 vT = 24; %Motor Voltage
-R = 150; %Motor Resistance
-L = 100; %Motor inductance
-n = 50; %Motor constant again
-Brotor = 1;
-Jrotor = 1;
-[K1, K2, K3, K4] = deal(1,2,3,4);
-[Brotor, B1, B2, B3, B4, B5] = deal(1,2,3,4,5,6);
-[B_CR_GR, B_CR_CO, B_CO_RO, B_RO_GR] = deal(1,2,3,4);
-
+R = .522; %Motor Resistance
+L = .625; %Motor inductance
+n = 109; %Motor constant again
+[K1, K2, K3, K4] = deal(806.42, 907.22, 1495.64, 43.38); %All Spring constants
+[Brotor, B1, B2, B3, B4, B5] = deal(0.0005, 0.07, 0.0005,.01,.01,.01); %Bearings
+[B_CR_GR, B_CR_CO, B_CO_RO, B_RO_GR] = deal(.05, .05, .05, .05); %Bearings again
+[Jrotor, J1, J2, J3, J4, J5, JCR, JCO, JRO] = deal(33.16, 1631.70, 0.14,0.50,0.01,1.13,0.17,12.00,0.64); %MMI's
+[N1, N2, N3, N4] = deal(1,50,12,60);
+[MCO] = deal(1); %Masses of links NEED
+[r1, r2, r3, r4] = deal(1,2,3,4); %Transformer moduli
+[r1_P, r2_P, r3_P, r4_P] = deal(1,2,3,4); %Derivative of Transformer moduli
 
 %Define differential Eq's
 lambda_P = vT - ((R/L)*lambda);
@@ -48,8 +48,17 @@ h2_P = (((J2*K2*N1^2)/((J2*N1^2)+(J3*N2^2)))*t2) - (((B2*N1^2)+(B3*N2^2))/((J1*N
 t3_P = ((N1/(N2*J2))*h2) - ((1/J4)*h4);
 h4_P = (((J4*K3*N4^2)/((J4*N3^2)+(J5*N4^2)))*t3) - (((B4*N3^2)+(B5*N4^2))/((J4*N3^2)+(J5*N4^2))*h4) - (((J4*K4*N3*N4)/((J4*N3^2)+(J5*N4^2)))*t4);
 t4_P = ((N4/(N3*J4))*h4) - ((1/JCR)*hCR);
-hCR_P = (((K4*JCR)/(JCR + (MCO*r1^2) + (MCO*r2^2) + (JCO*r3^2) + (JCO*r34^2)))*t4) - ((B_CR_GR + (MCO*r1*r1_P) + (MCO*r2*r2_P) + (B_CR_CO*(r3-1)^2) + (JCO*r3*r3_P) + (B_CO_RO*(r4-r3)^2) + (JRO*r4*r4_P) + (B_RO_GR*r4^2))/(JCR + (MCO*r1^2) + (MCO*r2^2) + (JCO*r3^2) + (JRO*r4^2)));
+hCR_P = (((K4*JCR)/(JCR + (MCO*r1^2) + (MCO*r2^2) + (JCO*r3^2) + (JCO*r4^2)))*t4) - ((B_CR_GR + (MCO*r1*r1_P) + (MCO*r2*r2_P) + (B_CR_CO*(r3-1)^2) + (JCO*r3*r3_P) + (B_CO_RO*(r4-r3)^2) + (JRO*r4*r4_P) + (B_RO_GR*r4^2))/(JCR + (MCO*r1^2) + (MCO*r2^2) + (JCO*r3^2) + (JRO*r4^2)));
 
 
-xprime = [lambda_P, hR_P, t1_P, h1_P, t2_P, h2_P, t3_P, h4_P, t4_P, hCR_P];
+xprime = [lambda_P; hR_P; t1_P; h1_P; t2_P; h2_P; t3_P; h4_P; t4_P; hCR_P];
+end
+
+function graphIt(x, IC)
+    titles = ["Lambda", "hR", "t1", "h1", "t2", "h2", "t3", "h4", "t4", "hCR"];
+    figure;
+        plot(t,x(:,1))
+    title(titles(1));
+    xlabel('Time'); ylabel(titles(1));
+    
 end
