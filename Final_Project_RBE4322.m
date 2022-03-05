@@ -34,7 +34,7 @@ n = 109; %Motor constant again
 [B_CR_GR, B_CR_CO, B_CO_RO, B_RO_GR] = deal(.05, .05, .05, .05); %Bearings again
 [Jrotor, J1, J2, J3, J4, J5, JCR, JCO, JRO] = deal(33.16, 1631.70, 0.14,0.50,0.01,1.13,0.17,12.00,0.64); %MMI's
 [N1, N2, N3, N4] = deal(1,50,12,60);
-[MCO] = deal(1); %Masses of links NEED
+[MCO] = deal(0.002903582903); %Masses of links NEED
 [r1, r2, r3, r4] = deal(1,2,3,4); %Transformer moduli
 [r1_P, r2_P, r3_P, r4_P] = deal(1,2,3,4); %Derivative of Transformer moduli
 
